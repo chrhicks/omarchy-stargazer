@@ -116,6 +116,33 @@ Item {
       recreated.destroy()
     }
 
+    function test_resultKeyboard_data() {
+      return [
+            {
+              tag: "return",
+              key: Qt.Key_Return
+            },
+            {
+              tag: "numpad-enter",
+              key: Qt.Key_Enter
+            },
+            {
+              tag: "space",
+              key: Qt.Key_Space
+            }
+          ]
+    }
+
+    function test_resultKeyboard(data) {
+      enterSearch("Greenwich")
+      form.acceptSearch(searchResponse("Greenwich"))
+      wait(50)
+      findChild(panel, "locationResult0").forceActiveFocus()
+      keyClick(data.key)
+      compare(panel.choosingLocation, false)
+      compare(panel.latitude, 51.4779)
+    }
+
     function test_typingDoesNotTriggerForecastShortcuts() {
       const field = findChild(panel, "locationQuery")
       field.forceActiveFocus()
@@ -155,10 +182,12 @@ Item {
       verify(form.errorText.indexOf("latitude") >= 0)
       compare(panel.configured, false)
       findChild(panel, "latitudeField").text = "0"
-      findChild(panel, "locationNameField").text = "Equator"
+      findChild(panel, "locationNameField").text = "--example"
       mouseClick(findChild(panel, "saveCoordinates"), 20, 15)
       compare(panel.configured, true)
-      compare(panel.locationName, "Equator")
+      compare(panel.locationName, "--example")
+      wait(400)
+      verify(findChild(panel, "forecastProcess").command.indexOf("--name=--example") >= 0)
     }
 
     function test_cancelKeepsSavedLocation() {

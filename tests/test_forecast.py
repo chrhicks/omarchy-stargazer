@@ -1,6 +1,8 @@
 import importlib.util
+import io
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -86,6 +88,13 @@ class ForecastTests(unittest.TestCase):
                 self.assertIn("saved", result["warning"])
                 other = forecast.fetch(41, -74, cache_dir=directory, now=now + 1900)
                 self.assertFalse(other["ok"])
+
+    def test_option_like_site_name_reaches_fetch_unchanged(self):
+        args = ["forecast.py", "--latitude", "0", "--longitude", "0", "--name=--example"]
+        with patch("sys.argv", args), patch.object(forecast, "fetch", return_value={"ok": True}) as fetch:
+            with redirect_stdout(io.StringIO()):
+                forecast.main()
+            fetch.assert_called_once_with(0, 0, "--example", False)
 
     def test_bad_coordinates_never_request_network(self):
         with patch.object(forecast, "urlopen") as request:

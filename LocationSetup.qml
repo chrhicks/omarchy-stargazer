@@ -191,6 +191,7 @@ Column {
           Accessible.name: modelData.name + ", " + modelData.detail
 
           Keys.onReturnPressed: root.choosePlace(modelData)
+          Keys.onEnterPressed: root.choosePlace(modelData)
           Keys.onSpacePressed: root.choosePlace(modelData)
           Accessible.onPressAction: root.choosePlace(modelData)
 

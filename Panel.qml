@@ -178,8 +178,8 @@ Panel {
       return
     errorText = ""
     const script = decodeURIComponent(Qt.resolvedUrl("forecast.py").toString().replace(/^file:\/\//, ""))
-    fetcher.command = ["python3", script, "--latitude", String(latitude), "--longitude", String(longitude), "--name",
-                       locationName]
+    fetcher.command = ["python3", script, "--latitude", String(latitude), "--longitude", String(longitude), "--name="
+                       + locationName]
     if (force)
       fetcher.command = fetcher.command.concat(["--refresh"])
     fetcher.running = true

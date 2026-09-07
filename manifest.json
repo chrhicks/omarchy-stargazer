@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "chicks.stargazer",
+  "name": "Stargazer",
+  "version": "0.1.0",
+  "author": "chrhicks",
+  "license": "MIT",
+  "description": "Hourly observing weather, Moon position and astronomical darkness in your Omarchy theme.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Stargazer",
+    "description": "Astronomy weather and the observing night",
+    "category": "Info",
+    "defaultSection": "center",
+    "allowMultiple": false,
+    "schema": [
+      {
+        "key": "locationName",
+        "type": "string",
+        "label": "Observing location"
+      },
+      {
+        "key": "latitude",
+        "type": "string",
+        "label": "Latitude"
+      },
+      {
+        "key": "longitude",
+        "type": "string",
+        "label": "Longitude"
+      },
+      {
+        "key": "temperatureUnit",
+        "type": "string",
+        "label": "Temperature: c or f"
+      },
+      {
+        "key": "windUnit",
+        "type": "string",
+        "label": "Wind: mph or kmh"
+      }
+    ]
+  }
+}

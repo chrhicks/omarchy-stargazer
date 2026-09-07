@@ -20,7 +20,9 @@ First-run checks verify no process starts without valid coordinates, setup guida
 
 ## Installation lifecycle
 
-Public Git installation, update, and removal are checked after the repository is published. This section is completed before tagging the release.
+The normal `omarchy plugin add https://github.com/chrhicks/omarchy-stargazer --enable` path was exercised against the public repository. A fresh installation displayed location setup guidance in the native panel. The up-to-date update path passed. Removal deleted the Git checkout and preserved unrelated shell settings. Reinstallation passed, and the original widget settings were restored exactly.
+
+The final documentation commit is also used to exercise a real fast-forward through `omarchy plugin update` before tagging. No installation script or privileged setup is required; users configure their own location after enabling the widget.
 
 ## Compatibility limits
 

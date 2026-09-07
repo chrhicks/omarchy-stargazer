@@ -2,7 +2,7 @@
 
 An observing-night forecast in your Omarchy bar.
 
-**Version 0.1.0.** Three observing nights, hourly cloud layers, wind/gusts, temperature/dew point, rain probability, Moon illumination/altitude, and astronomical darkness. The panel follows Omarchy's current theme. No map, alerts, or specialized seeing/transparency forecast is included.
+**Version 0.1.1 (release candidate).** Three observing nights, hourly cloud layers, wind/gusts, temperature/dew point, rain probability, Moon illumination/altitude, and astronomical darkness. The panel follows Omarchy's current theme. No map, alerts, or specialized seeing/transparency forecast is included.
 
 Stargazer is an independent Omarchy Quattro plugin, ID `chicks.stargazer`. No account or API key is required. Original code is MIT-licensed; the included SunCalc library retains its BSD 2-Clause license. See [THIRD_PARTY.md](THIRD_PARTY.md).
 
@@ -28,7 +28,7 @@ The forecast's location timezone is used for labels. Both repeated fall-back hou
 
 - Omarchy Quattro with the current `qs.Ui` BarWidget/KeyboardPanel contract. Tested on Omarchy 4.0.2-1.
 - Python 3.9 or newer with system timezone data (standard library only).
-- Internet access to `api.open-meteo.com` for weather. Astronomy is calculated locally.
+- Internet access to `api.open-meteo.com` for weather and `geocoding-api.open-meteo.com` for optional place search. Astronomy is calculated locally.
 
 The provider receives your configured latitude/longitude. No coordinates or credentials are built into this repository. Updates are cached for 30 minutes. A manual refresh has a one-minute minimum interval; multiple monitor instances share a per-location lock/cache. Network requests time out after 12 seconds. A last-good forecast is marked as saved if refreshing fails; missing data is never displayed as clear skies.
 
@@ -40,17 +40,13 @@ Cache: `$XDG_CACHE_HOME/omarchy-stargazer`, or `~/.cache/omarchy-stargazer`. It 
 omarchy plugin add https://github.com/chrhicks/omarchy-stargazer --enable
 ```
 
-Configure your own observing location before it will request a forecast. The numbers below are placeholders, not runnable coordinates:
+## Choose your observing location
 
-```text
-omarchy bar set chicks.stargazer locationName "Your observing site"
-omarchy bar set chicks.stargazer latitude YOUR_LATITUDE
-omarchy bar set chicks.stargazer longitude YOUR_LONGITUDE
-omarchy bar set chicks.stargazer temperatureUnit c
-omarchy bar set chicks.stargazer windUnit mph
-```
+On first open, search for a town or postal code and choose a matching place. The forecast loads automatically, and the location is saved across restarts. Use **Location** in the panel header to change it later. Escape or Cancel leaves your saved location unchanged.
 
-Settings are stored in your user `shell.json`. No other widget needs to be replaced. An unconfigured installation shows setup guidance and makes no forecast request.
+For a precise observing site, choose **Enter coordinates**, provide decimal latitude and longitude and an optional site name, then choose **Use this location**. Both paths work entirely in the panel; no setup commands or configuration-file editing are required. Search sends the text you submit to Open-Meteo's geocoding service. There is no automatic GeoIP lookup.
+
+Settings are stored in your widget's entry in the user `shell.json`. Other widgets are left unchanged. Unit buttons switch the current session; persistent defaults remain available in Omarchy's widget settings.
 
 ## Update and remove
 
@@ -64,7 +60,7 @@ Disabling removes the widget from the bar, including its widget settings; record
 
 ## Develop and verify
 
-Read [CODING_STANDARDS.md](CODING_STANDARDS.md) for the readability target and implementation defaults. The main panel coordinates state and refresh. `SkyScene.qml` draws the illustration; `ForecastCharts.qml` owns the plots; `TimeScrubber.qml` emits selected timestamps; `ForecastReadings.qml` binds persistent controls. `ForecastModel.js` owns time/astronomy calculations, and `forecast.py` owns provider/cache boundaries.
+Read [CODING_STANDARDS.md](CODING_STANDARDS.md) for the readability target and implementation defaults. The main panel coordinates state and refresh. `SkyScene.qml` draws the illustration; `ForecastCharts.qml` owns the plots; `TimeScrubber.qml` emits selected timestamps; `ForecastReadings.qml` binds persistent controls. `ForecastModel.js` owns time/astronomy calculations, and `forecast.py` owns provider/cache boundaries. `LocationSetup.qml` owns the location form, `geocode.py` searches places, and `LocationSettings.js` validates and updates only this widget’s location settings.
 
 Development checks require Qt's `qmlformat`, `qmllint`, and `qmltestrunner`, Node, Ruff, and Biome 2.5.10 or compatible. These add no production dependencies. The tools can be on PATH or supplied by uppercase environment variables such as `RUFF` and `BIOME`; Qt tools also resolve from `/usr/lib/qt6/bin`.
 

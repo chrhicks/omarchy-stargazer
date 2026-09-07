@@ -21,3 +21,10 @@ License: https://creativecommons.org/licenses/by/4.0/
 ## Omarchy
 
 The plugin imports the installed Omarchy shared UI components. They remain part of the host installation. Omarchy's documented bar/panel lifecycle was used as an integration reference; no packaged shell component is redistributed here.
+
+## Place search
+
+Place-name search uses Open-Meteo's geocoding API, whose location data is based on GeoNames. Attribution is shown in the location form. Search is explicit and optional; manual coordinate entry does not use geocoding.
+
+Documentation: https://open-meteo.com/en/docs/geocoding-api
+GeoNames attribution: https://www.geonames.org/

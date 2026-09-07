@@ -17,12 +17,11 @@ def copy_plugin(source, output):
             shutil.copy2(path, plugin / path.name)
     shutil.copytree(source / "vendor", plugin / "vendor", dirs_exist_ok=True)
     # Only host process/clock imports change. UI, handlers and models stay intact.
-    panel = plugin / "Panel.qml"
-    original = panel.read_text()
-    imports = "import Quickshell\nimport Quickshell.Io\n"
-    if original.count(imports) != 1:
-        raise ValueError("Panel host imports changed; update this adapter explicitly")
-    panel.write_text(original.replace(imports, 'import "../Host"\n'))
+    for path in plugin.glob("*.qml"):
+        original = path.read_text()
+        adapted = original.replace("import Quickshell\n", "")
+        adapted = adapted.replace("import Quickshell.Io\n", 'import "../Host"\n')
+        path.write_text(adapted)
 
 
 def prepare_fixture(source, output, moves, scale, chart):
@@ -32,6 +31,7 @@ def prepare_fixture(source, output, moves, scale, chart):
     key_catcher = Path("/usr/share/omarchy/shell/Ui/PanelKeyCatcher.qml")
     shutil.copy2(key_catcher, output / "qs/Ui/PanelKeyCatcher.qml")
     shutil.copy2(source / "tests/tst_panel.qml", output / "tst_profile.qml")
+    shutil.copy2(source / "tests/tst_location.qml", output / "tst_location.qml")
     shutil.copy2(source / "tests/ForecastFixture.js", output / "ForecastFixture.js")
     settings = f"""import QtQuick
 QtObject {{

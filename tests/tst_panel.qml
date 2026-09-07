@@ -290,7 +290,7 @@ Item {
       setupPanel.refresh(true)
       wait(400)
       compare(process.startCount, 0)
-      verify(setupPanel.statusMessage().indexOf("Set your observing location") >= 0)
+      verify(setupPanel.choosingLocation)
       setupPanel.settings = ({
                                latitude: 200,
                                longitude: 0

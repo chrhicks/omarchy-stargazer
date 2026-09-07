@@ -70,12 +70,30 @@ def main():
     run([ruff, "check", "."])
     run([biome, "check", *(["--write"] if args.format else []), "tests"])
     run([tool("python3"), "-m", "unittest", "discover", "-s", "tests", "-v"])
-    run([tool("node"), "--test", "tests/forecast-model.cjs", "tests/cloud-field.cjs"])
+    run(
+        [
+            tool("node"),
+            "--test",
+            "tests/forecast-model.cjs",
+            "tests/cloud-field.cjs",
+            "tests/location-settings.cjs",
+        ]
+    )
     with tempfile.TemporaryDirectory(prefix="stargazer-check-") as temporary:
         directory = Path(temporary)
         lint_qml(directory)
         replay_panel(directory / "cloud", "cloud")
         replay_panel(directory / "sky", "sky")
+        run(
+            [
+                tool("qmltestrunner"),
+                "-import",
+                directory / "sky",
+                "-input",
+                directory / "sky/tst_location.qml",
+            ],
+            timeout=30,
+        )
     run([tool("omarchy"), "plugin", "validate", ROOT])
 
 

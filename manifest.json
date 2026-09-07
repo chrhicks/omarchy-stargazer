@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "chicks.stargazer",
   "name": "Stargazer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "chrhicks",
   "license": "MIT",
   "description": "Hourly observing weather, Moon position and astronomical darkness in your Omarchy theme.",

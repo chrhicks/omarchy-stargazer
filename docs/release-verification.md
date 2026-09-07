@@ -27,3 +27,13 @@ The final documentation commit is also used to exercise a real fast-forward thro
 ## Compatibility limits
 
 Monitor hot-unplug, mixed-DPI combinations, other GPUs, native touchpad gesture stealing, and extended soak testing remain outside this release's verified coverage. No map, specialized seeing/transparency forecast, or precise sky-map rendering is provided. Unit buttons change the session view; persistent defaults use widget settings.
+
+## 0.1.1 candidate: location setup
+
+The new first-run location form is implemented and installed for local review. The marketplace submission remains on hold pending release review.
+
+- The full checks pass, including 13 Python tests, location-settings JavaScript tests, both 600-move chart replays, and seven Qt location-form results (including setup/cleanup).
+- Qt interaction tests click a search result and the manual-coordinate save button, check invalid input, cancel, stale responses and typing without triggering forecast shortcuts. Settings survive panel recreation through a host-settings stub.
+- Live Open-Meteo place search was verified with Greenwich and a country-qualified search.
+- Native first-run rendering was inspected. A temporary QA widget called the real panel's save method through the native bar; the selected public example location was written by Omarchy's settings writer, survived a shell restart, and loaded a forecast. The QA widget was removed and original user settings restored. This checks the real persistence path separately from the offscreen mouse/keyboard tests.
+- Native physical typing/search-result selection remains distinct from these automated tests.

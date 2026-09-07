@@ -7,6 +7,7 @@ import Quickshell.Io
 import qs.Commons
 import qs.Ui
 import "ForecastModel.js" as ForecastModel
+import "LocationSettings.js" as LocationSettings
 
 Panel {
   id: root
@@ -23,6 +24,8 @@ Panel {
   property int selectedIndex: 0
   property string errorText: ""
   property bool selectNowAfterRefresh: false
+  property bool locationEditing: false
+  readonly property bool choosingLocation: !configured || locationEditing
   property bool fahrenheit: setting("temperatureUnit", "c") === "f"
   property bool mph: setting("windUnit", "mph") === "mph"
   readonly property string locationName: String(setting("locationName", "Observing location"))
@@ -55,10 +58,6 @@ Panel {
   }
 
   function statusMessage() {
-    if (!configured) {
-      return "Set your observing location in the plugin settings: latitude, longitude and locationName. "
-          + "See the Stargazer README for commands."
-    }
     if (errorText)
       return errorText
     if (stale)
@@ -103,12 +102,35 @@ Panel {
     return Number(value)
   }
 
+  function saveLocation(values) {
+    try {
+      const host = hostBar ? hostBar.shell : null
+      if (!host || typeof host.mutateShellConfig !== "function")
+        throw new Error("Location settings are unavailable from this bar. Reopen Stargazer and try again.")
+      host.mutateShellConfig(config => LocationSettings.writeLocation(config, values))
+      settings = Object.assign({}, settings, values)
+      locationEditing = false
+      keys.forceActiveFocus()
+    } catch (error) {
+      locationSetup.errorText = error.message
+    }
+  }
+
+  function editLocation() {
+    locationEditing = true
+    locationSetup.begin()
+  }
+
   function open() {
     controller.show()
+    if (choosingLocation)
+      locationSetup.begin()
     refresh(false)
   }
 
   function close() {
+    locationSetup.resetSearch()
+    locationEditing = false
     controller.hide()
   }
 
@@ -229,7 +251,7 @@ Panel {
     owner: root.hostWidget || root
     bar: root.bar
     open: root.opened
-    focusTarget: keys
+    focusTarget: root.choosingLocation ? locationSetup : keys
     contentWidth: fittedContentWidth(Style.space(760))
     contentHeight: fittedContentHeight(content.implicitHeight)
 
@@ -237,6 +259,7 @@ Panel {
       id: keys
 
       anchors.fill: parent
+      blocked: root.choosingLocation
 
       onCloseRequested: root.close()
       onTabRequested: function (direction) {
@@ -258,6 +281,15 @@ Panel {
           root.fahrenheit = !root.fahrenheit
         if (key === "w")
           root.mph = !root.mph
+      }
+      Keys.onEscapePressed: {
+        if (root.locationEditing) {
+          root.locationEditing = false
+          locationSetup.resetSearch()
+          keys.forceActiveFocus()
+        } else {
+          root.close()
+        }
       }
 
       Flickable {
@@ -287,6 +319,9 @@ Panel {
               }
 
               Copy {
+                width: parent.width
+                elide: Text.ElideRight
+                visible: root.configured
                 text: root.locationName
                 font.pixelSize: root.fonts.title
                 font.bold: true
@@ -294,45 +329,79 @@ Panel {
             }
 
             Action {
+              objectName: "changeLocation"
+              label: "Location"
+              visible: !root.choosingLocation
+
+              onClicked: root.editLocation()
+            }
+
+            Action {
+              visible: !root.choosingLocation
               label: "Now"
 
               onClicked: root.selectNow()
             }
 
             Action {
+              visible: !root.choosingLocation
               label: root.fahrenheit ? "°F" : "°C"
 
               onClicked: root.fahrenheit = !root.fahrenheit
             }
 
             Action {
+              visible: !root.choosingLocation
               label: root.mph ? "mph" : "km/h"
 
               onClicked: root.mph = !root.mph
             }
 
             Action {
+              visible: !root.choosingLocation
               label: fetcher.running ? "Refreshing…" : "Refresh"
 
               onClicked: root.refresh(true)
             }
           }
 
+          LocationSetup {
+            id: locationSetup
+
+            width: parent.width
+            visible: root.choosingLocation
+            canCancel: root.configured
+            currentName: root.locationName
+            currentLatitude: root.configured ? String(root.latitude) : ""
+            currentLongitude: root.configured ? String(root.longitude) : ""
+            ink: root.ink
+            accent: root.accent
+            face: root.face
+
+            onLocationSelected: values => root.saveLocation(values)
+            onCancelRequested: {
+              root.locationEditing = false
+              resetSearch()
+              keys.forceActiveFocus()
+            }
+          }
+
           Copy {
             width: parent.width
-            visible: !root.configured || root.errorText !== "" || root.stale
+            visible: !root.choosingLocation && (root.errorText !== "" || root.stale)
             wrapMode: Text.WordWrap
             color: root.stale || root.errorText ? Color.urgent : root.ink
             text: root.statusMessage()
           }
 
           Copy {
-            visible: root.configured && !root.report && !root.errorText
+            visible: !root.choosingLocation && !root.report && !root.errorText
             text: "Fetching your observing forecast…"
             opacity: .7
           }
 
           Row {
+            visible: !root.choosingLocation
             spacing: Style.space(8)
 
             Repeater {
@@ -352,7 +421,7 @@ Panel {
 
           Column {
             width: parent.width
-            visible: root.forecast !== null
+            visible: !root.choosingLocation && root.forecast !== null
             spacing: Style.space(10)
 
             RowLayout {
@@ -376,7 +445,7 @@ Panel {
               width: parent.width
               height: Style.space(190)
               hour: root.selectedHour
-              active: root.opened
+              active: root.opened && !root.choosingLocation
               ink: root.ink
               face: root.face
             }
@@ -388,7 +457,7 @@ Panel {
               forecast: root.forecast
               hour: root.selectedHour
               viewStart: root.viewStart
-              active: root.opened
+              active: root.opened && !root.choosingLocation
               ink: root.ink
               accent: root.accent
               face: root.face
@@ -449,39 +518,10 @@ Panel {
     }
   }
 
-  component Action: Rectangle {
-    id: action
-
-    property string label: ""
-    property bool selected: false
-
-    signal clicked
-
-    implicitWidth: caption.implicitWidth + Style.space(20)
-    implicitHeight: Style.space(32)
-    color: Qt.rgba(root.accent.r, root.accent.g, root.accent.b, action.selected ? .16 : pointer.containsMouse
-                                                                                  ? .09 : 0)
-    border.width: 1
-    border.color: Qt.rgba(root.ink.r, root.ink.g, root.ink.b, action.selected ? .6 : .15)
-    radius: Math.min(Style.cornerRadius, Style.space(5))
-
-    Copy {
-      id: caption
-
-      anchors.centerIn: parent
-      text: action.label
-      font.pixelSize: root.fonts.bodySmall
-    }
-
-    MouseArea {
-      id: pointer
-
-      anchors.fill: parent
-      hoverEnabled: true
-      cursorShape: Qt.PointingHandCursor
-
-      onClicked: action.clicked()
-    }
+  component Action: PanelButton {
+    ink: root.ink
+    accent: root.accent
+    face: root.face
   }
   component Copy: Text {
     color: root.ink

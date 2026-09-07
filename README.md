@@ -2,7 +2,7 @@
 
 An observing-night forecast in your Omarchy bar.
 
-**Version 0.1.1 (release candidate).** Three observing nights, hourly cloud layers, wind/gusts, temperature/dew point, rain probability, Moon illumination/altitude, and astronomical darkness. The panel follows Omarchy's current theme. No map, alerts, or specialized seeing/transparency forecast is included.
+**Version 0.1.1.** Three observing nights, hourly cloud layers, wind/gusts, temperature/dew point, rain probability, Moon illumination/altitude, and astronomical darkness. The panel follows Omarchy's current theme. No map, alerts, or specialized seeing/transparency forecast is included.
 
 Stargazer is an independent Omarchy Quattro plugin, ID `chicks.stargazer`. No account or API key is required. Original code is MIT-licensed; the included SunCalc library retains its BSD 2-Clause license. See [THIRD_PARTY.md](THIRD_PARTY.md).
 
@@ -35,8 +35,6 @@ The provider receives your configured latitude/longitude. No personal coordinate
 Cache: `$XDG_CACHE_HOME/omarchy-stargazer`, or `~/.cache/omarchy-stargazer`. It contains location-specific weather. Removing the plugin does not automatically delete that cache; it can be removed separately if desired.
 
 ## Install
-
-The command below currently installs public v0.1.0, which requires location configuration in widget settings. The in-panel setup described here is part of the unreleased 0.1.1 candidate and will be available through this command after publication.
 
 ```sh
 omarchy plugin add https://github.com/chrhicks/omarchy-stargazer --enable

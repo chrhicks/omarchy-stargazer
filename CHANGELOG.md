@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 — 2026-09-07
 
 - Set or change the observing location directly in the panel, using town/postal-code search or manual coordinates.
 - Save location settings across restarts without setup commands.

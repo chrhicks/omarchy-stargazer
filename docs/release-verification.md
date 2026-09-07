@@ -39,3 +39,11 @@ The new first-run location form is implemented and installed for local review. T
 - Native physical typing/search-result selection remains distinct from these automated tests.
 
 Independent release and security audits found no additional first-run blocker or confirmed security vulnerability. Maintainer-side review reproduced and fixed two usability findings: numpad Enter now selects a search result, and site names beginning with `--` reach the forecast helper unchanged. Regression checks cover Return, numpad Enter, Space, and option-like names through the form and helper argument parser.
+
+### Final candidate pass
+
+The full check suite passed again on the committed candidate. A temporary native QA widget exercised the installed form's real search and selection methods: a live country-qualified place search returned five results, selecting one persisted the location and loaded 72 forecast hours, and a full shell restart preserved the settings and loaded the forecast again. Native hour stepping, returning to Now, canceling location editing, and requesting refresh passed. The restarted forecast was visually inspected. The temporary widget was removed and the prior user settings were restored byte-for-byte, followed by another shell restart.
+
+This native integration pass calls the actual form methods; Qt tests separately exercise mouse and keyboard input. The maintainer also reported that the fresh-start flow worked well on the desktop. No new release or marketplace submission was made.
+
+When resetting a configured installation for first-run testing, restart the shell after clearing widget settings. Plugin rescan alone retained the running panel's old location during testing; a restart displayed the empty setup form. Verify the visible result before declaring the reset complete.

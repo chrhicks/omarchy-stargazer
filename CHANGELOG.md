@@ -16,4 +16,4 @@ First public release.
 - Illustrative sky responsive to daylight and cloud cover.
 - Current-hour tooltip, configurable location and default units, bounded refreshes, and saved-forecast fallback.
 
-Location setup uses plugin settings or the commands in README.md. In-panel unit switches last for the session. Maps, alerts, seeing/transparency predictions, and precise sky-map rendering are outside this release.
+In v0.1.0, location setup required plugin settings or the commands documented in that release. In-panel unit switches last for the session. Maps, alerts, seeing/transparency predictions, and precise sky-map rendering are outside this release.

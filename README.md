@@ -14,7 +14,7 @@ Click the Moon icon to open the panel. The panel shows a sliding 24-hour window 
 
 Paired-day tabs (Sun → Mon) and Up/Down (k/j) remain shortcuts to observing nights. The scene shows the selected calendar day alongside its time. Now centers the current forecast hour. At the forecast limits the window stops sliding and the handle approaches its edge.
 
-- Escape closes; Tab/Shift-Tab switches among the host bar's panels.
+- In the forecast view, Escape closes and Tab/Shift-Tab switches among the host bar's panels. In location setup, Tab moves through the form; Return or numpad Enter selects a focused result, and Escape cancels editing or closes first-run setup.
 - N or Now returns to the current forecast hour, including its observing night. The bar tooltip always describes that hour, independently of scrubbing. If current-hour data is unavailable, Now requests a refresh.
 - R or Refresh requests an update. Middle-clicking the bar icon also refreshes.
 - U or the temperature button switches °C/°F; W or the wind button switches mph/km/h. These are session view switches; configure persistent defaults below.
@@ -30,11 +30,13 @@ The forecast's location timezone is used for labels. Both repeated fall-back hou
 - Python 3.9 or newer with system timezone data (standard library only).
 - Internet access to `api.open-meteo.com` for weather and `geocoding-api.open-meteo.com` for optional place search. Astronomy is calculated locally.
 
-The provider receives your configured latitude/longitude. No coordinates or credentials are built into this repository. Updates are cached for 30 minutes. A manual refresh has a one-minute minimum interval; multiple monitor instances share a per-location lock/cache. Network requests time out after 12 seconds. A last-good forecast is marked as saved if refreshing fails; missing data is never displayed as clear skies.
+The provider receives your configured latitude/longitude. No personal coordinates or credentials are built into the plugin. Greenwich is used only for documentation and test examples; there is no default observing location. Updates are cached for 30 minutes. A manual refresh has a one-minute minimum interval; multiple monitor instances share a per-location lock/cache. Forecast requests time out after 12 seconds; place searches after 10 seconds. A last-good forecast is marked as saved if refreshing fails; missing data is never displayed as clear skies.
 
 Cache: `$XDG_CACHE_HOME/omarchy-stargazer`, or `~/.cache/omarchy-stargazer`. It contains location-specific weather. Removing the plugin does not automatically delete that cache; it can be removed separately if desired.
 
 ## Install
+
+The command below currently installs public v0.1.0, which requires location configuration in widget settings. The in-panel setup described here is part of the unreleased 0.1.1 candidate and will be available through this command after publication.
 
 ```sh
 omarchy plugin add https://github.com/chrhicks/omarchy-stargazer --enable
@@ -42,7 +44,7 @@ omarchy plugin add https://github.com/chrhicks/omarchy-stargazer --enable
 
 ## Choose your observing location
 
-On first open, search for a town or postal code and choose a matching place. The forecast loads automatically, and the location is saved across restarts. Use **Location** in the panel header to change it later. Escape or Cancel leaves your saved location unchanged.
+On first open, the search field is empty. Search for a town or postal code and choose a matching place. Add a country to narrow ambiguous names, for example Greenwich, United Kingdom. The forecast loads automatically, and the location is saved across restarts. Use **Location** in the panel header to change it later. Escape or Cancel leaves your saved location unchanged.
 
 For a precise observing site, choose **Enter coordinates**, provide decimal latitude and longitude and an optional site name, then choose **Use this location**. Both paths work entirely in the panel; no setup commands or configuration-file editing are required. Search sends the text you submit to Open-Meteo's geocoding service. There is no automatic GeoIP lookup.
 
@@ -69,7 +71,7 @@ python3 tools/check.py
 python3 tools/check.py --format  # apply formatters, then run the same checks
 ```
 
-The check includes formatting, zero-warning QML lint against the installed host, Python lint and tests, JavaScript tests, plugin validation, and both full-panel Qt drag replays. The replays run offscreen with inert host processes and synthetic data; they do not change the desktop or request a forecast. Missing values, DST/noon boundaries, cache fallback/cooldown, cloud-buffer reuse, close/cancel behavior, persistent reading controls, and independent current-hour tooltips are covered.
+The check includes formatting, zero-warning QML lint against the installed host, Python lint and tests, JavaScript tests, plugin validation, both full-panel Qt drag replays, and location-form interaction tests. The replays run offscreen with inert host processes and synthetic data; they do not change the desktop or request a forecast. Missing values, DST/noon boundaries, cache fallback/cooldown, cloud-buffer reuse, close/cancel behavior, persistent reading controls, independent current-hour tooltips, search errors and stale responses, coordinate validation, keyboard selection, and location persistence through panel recreation are covered.
 
 To retain a screenshot and replay output for inspection:
 

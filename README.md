@@ -60,7 +60,7 @@ Disabling removes the widget from the bar, including its widget settings; record
 
 ## Develop and verify
 
-Read [CODING_STANDARDS.md](CODING_STANDARDS.md) for the readability target and implementation defaults. The main panel coordinates state and refresh. `SkyScene.qml` draws the illustration; `ForecastCharts.qml` owns the plots; `TimeScrubber.qml` emits selected timestamps; `ForecastReadings.qml` binds persistent controls. `ForecastModel.js` owns time/astronomy calculations, and `forecast.py` owns provider/cache boundaries. `LocationSetup.qml` owns the location form, `geocode.py` searches places, and `LocationSettings.js` validates and updates only this widget’s location settings.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for project scope and contribution guidance, and [CODING_STANDARDS.md](CODING_STANDARDS.md) for the readability target and implementation defaults. The main panel coordinates state and refresh. `SkyScene.qml` draws the illustration; `ForecastCharts.qml` owns the plots; `TimeScrubber.qml` emits selected timestamps; `ForecastReadings.qml` binds persistent controls. `ForecastModel.js` owns time/astronomy calculations, and `forecast.py` owns provider/cache boundaries. `LocationSetup.qml` owns the location form, `geocode.py` searches places, and `LocationSettings.js` validates and updates only this widget’s location settings.
 
 Development checks require Qt's `qmlformat`, `qmllint`, and `qmltestrunner`, Node, Ruff, and Biome 2.5.10 or compatible. These add no production dependencies. The tools can be on PATH or supplied by uppercase environment variables such as `RUFF` and `BIOME`; Qt tools also resolve from `/usr/lib/qt6/bin`.
 
